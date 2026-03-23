@@ -4,6 +4,7 @@ import { apiResponse } from '../../utilis/apiResponse.js';
 import AppError from '../../utilis/appError.js';
 import statusCode from '../../utilis/statusCode.js';
 import { processCheckout } from '../../services/attendanceService.js';
+import { getPagination } from '../../utilis/pagination.js';
 /*
 POST REQUEST
 EMPLOYEE check_in */
@@ -119,15 +120,25 @@ export const employee_check_out=async(req,res,next)=>{
 
 export const view_all_attendance=async(req,res,next)=>{
     try{
-         const allAttendance=await attendance.find().sort({date:-1})
+        const {page,limit,skip}=getPagination(req);
+
+         const allAttendance=await attendance.find().sort({date:-1}).skip(skip).limit(limit);
          console.log("ALL ATTANDANCE LIST:",allAttendance);
+
+            //total count of attendance record
+            const totalAttendance=await attendance.countDocuments();
 
          if(!allAttendance||allAttendance.length===0) return AppError(res,statusCode.NOT_FOUND,"No attendance found");
 
          return res.status(statusCode.OK_COMPLETED).json(apiResponse(
             statusCode.OK_COMPLETED,
             "Employees attandance list is fetched sucessfully",
-            {allAttendance}
+            {totalAttendance,
+                attendance:allAttendance,
+                page,
+                limit,
+                totalPage:Math.ceil(totalAttendance/limit)
+            }
          ))
 
 
