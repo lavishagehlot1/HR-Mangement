@@ -2,6 +2,7 @@ import employee from '../../models/employeeModel.js';
 import leave from '../../models/leaveModel.js';
 import { apiResponse } from '../../utilis/apiResponse.js';
 import AppError from '../../utilis/appError.js';
+import { getPagination } from '../../utilis/pagination.js';
 import statusCode from '../../utilis/statusCode.js';
 /**
  *POST REQUEST
@@ -64,7 +65,24 @@ export const apply_for_leave=async(req,res,next)=>{
  */
 export const viewLeaveRequest=async(req,res,next)=>{
     try{
-        const allLeaves=await leave.find();
+        const{page,limit,skip}=getPagination(req);
+
+        //optional filter by satatus
+        const status=req.query.status;//pending approved ,rejected
+        let query={};//You start with no filter (fetch everything).
+                     //Then, optionally, you add filters dynamically depending on request query parameters:
+         if(status) query.status_of_leave=status;//If the client sends ?status=pending, the query becomes { status_of_leave: "pending" }
+                                            //If the client doesn’t send any status, the query stays {} → fetch all leaves
+        
+        // Count total leaves for pagination info
+    const totalLeaves = await leave.countDocuments(query)
+        
+        
+    const allLeaves=await leave.find(query)
+                                 .populate("employee_id","employeeName employeeId")  
+                                .skip(skip).limit(limit)
+                                .sort({createdAt:-1});//sort by createdAt in descending order
+        
         console.log("ALL LEAVES:",allLeaves);
 
         //check if no leave is exist
@@ -74,7 +92,11 @@ export const viewLeaveRequest=async(req,res,next)=>{
         return res.status(statusCode.OK_COMPLETED).json(
             apiResponse(statusCode.OK_COMPLETED,
                 "All leaves are fetched sucessfully",
-                {allLeaves}
+                {totalLeaves,
+                    page,
+                    limit,
+                    totalPage:Math.ceil(totalLeaves/limit),
+                    leaves:allLeaves}
             )
         )
 

@@ -2,6 +2,7 @@ import employee from "../../models/employeeModel.js";
 import AppError from "../../utilis/appError.js";
 import  statusCode  from "../../utilis/statusCode.js";
 import { apiResponse } from "../../utilis/apiResponse.js";
+import { getPagination } from "../../utilis/pagination.js";
 /**
  * POST request
  * createEmployee controller
@@ -48,7 +49,18 @@ export const createEmployee=async(req,res,next)=>{
  */
 export const getAllEmployee=async(req,res,next)=>{
     try{
-        const allEmployee=await employee.find().populate("userId","userName userEmail");
+        const{page,limit,skip}=getPagination(req);
+
+        const allEmployee=await employee.find()
+                                        .populate("userId","userName userEmail")
+                                        .skip(skip) //if skip =10 then it will skip first 10 records and show from the 11th record.
+                                        .limit(limit);
+
+        //total count of employee
+        const totalEmployee=await employee.countDocuments(); //countDocuments-->It is a MongoDB method that:
+                                                            //Counts how many documents (records) exist in a collection
+        console.log("Total employee:",totalEmployee);
+
         //check if no employee exist
         if(!allEmployee||allEmployee.length===0) return AppError(res,statusCode.NOT_FOUND,"No employee found");
         //return appError(res,stustcode,"msg")
@@ -58,7 +70,13 @@ export const getAllEmployee=async(req,res,next)=>{
             apiResponse(
                 statusCode.SUCCESS,
                 "All employees are fetched successfully",
-                allEmployee
+                {
+                    page,
+                    limit,
+                    totalEmployee,
+                    totalPage:Math.ceil(totalEmployee/limit),
+                    data:allEmployee
+                }
             )
         )
     }catch(err){
