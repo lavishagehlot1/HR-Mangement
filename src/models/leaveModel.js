@@ -22,7 +22,7 @@ const leaveSchema=new mongoose.Schema({
     reason:{
         type:String,
         required:true,
-        minLength:[true,"Reason should be atleast of 8 characters"]
+        minLength:[8,"Reason should be atleast of 8 characters"]
     },
     status_of_leave:{
         type:String,
