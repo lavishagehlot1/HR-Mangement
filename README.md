@@ -182,37 +182,7 @@ GET /leave/requests?page=1&limit=20
 
 >  These endpoints support pagination using `page` and `limit`.
 
----
 
-## Validation Middleware
-
-Centralized Joi validation middleware:
-
-```js
-router.post(
-  "/login",
-  validate({ body: loginSchema }),
-  loginUser
-);
-```
-
-Supports:
-
-* `body`
-* `query`
-* `params`
-
----
-
-## Example Joi Schema
-
-```js
-import Joi from "joi";
-
-export const loginSchema = Joi.object({
-  userEmail: Joi.string().email().required(),
-  password: Joi.string().min(6).required(),
-});
 ```
 
 ---
@@ -222,62 +192,62 @@ export const loginSchema = Joi.object({
 hr-management/
 ├── src/
 │   ├── config/
-│   │   └── db.js                      # MongoDB connection setup
+│   │   └── db.js                                       # MongoDB connection setup
 │
-│   ├── controllers/                  # Business logic for each module
+│   ├── controllers/                                    # Business logic for each module
 │   │   ├── authController/
-│   │   │   └── authController.js     # Handles login & registration
+│   │   │   └── authController.js                       # Handles login & registration
 │   │   ├── employeeController/
-│   │   │   └── employeeController.js # Employee CRUD operations
+│   │   │   └── employeeController.js                   # Employee CRUD operations
 │   │   ├── attendanceController/
-│   │   │   └── attendanceController.js # Check-in, check-out logic
+│   │   │   └── attendanceController.js                 # Check-in, check-out logic
 │   │   └── leaveController/
-│   │       └── leaveController.js    # Leave apply/approve/reject logic
+│   │       └── leaveController.js                      # Leave apply/approve/reject logic
 │
-│   ├── models/                       # Mongoose schemas
-│   │   ├── attendanceModel.js        # Attendance schema
-│   │   ├── authModel.js              # User/Auth schema
-│   │   ├── leaveModel.js             # Leave schema
-│   │   └── employeeModel.js          # Employee schema
+│   ├── models/                                          # Mongoose schemas
+│   │   ├── attendanceModel.js                           # Attendance schema
+│   │   ├── authModel.js                                 # User/Auth schema
+│   │   ├── leaveModel.js                                # Leave schema
+│   │   └── employeeModel.js                             # Employee schema
 │
-│   ├── validations/                  # Joi validation schemas (NEW)
-│   │   ├── authValidation.js         # Login & register validation
-│   │   ├── employeeValidation.js     # Employee validation rules
-│   │   ├── attendanceValidation.js   # Attendance validation rules
-│   │   └── leaveValidation.js        # Leave validation rules
+│   ├── validations/                                     # Joi validation schemas (NEW)
+│   │   ├── authValidation.js                            # Login & register validation
+│   │   ├── employeeValidation.js                        # Employee validation rules
+│   │   ├── attendanceValidation.js                      # Attendance validation rules
+│   │   └── leaveValidation.js                           # Leave validation rules
 │
-│   ├── middlewares/                  # Custom middlewares
-│   │   ├── authMiddleware.js         # JWT authentication middleware
-│   │   ├── authorizeRole.js          # Role-based access control
-│   │   ├── globalErrorHandler.js     # Handles all errors globally
-│   │   └── validate.js               # Joi validation middleware (NEW)
+│   ├── middlewares/                                      # Custom middlewares
+│   │   ├── authMiddleware.js                             # JWT authentication middleware
+│   │   ├── authorizeRole.js                              # Role-based access control
+│   │   ├── globalErrorHandler.js                         # Handles all errors globally
+│   │   └── validate.js                                   # Joi validation middleware (NEW)
 │
-│   ├── routes/                       # API route definitions
-│   │   ├── authRoutes.js             # Auth routes
-│   │   ├── attendanceRoutes.js       # Attendance routes
-│   │   ├── employeeRoutes.js         # Employee routes
-│   │   └── leaveRoutes.js            # Leave routes
+│   ├── routes/                                           # API route definitions
+│   │   ├── authRoutes.js                                 # Auth routes
+│   │   ├── attendanceRoutes.js                           # Attendance routes
+│   │   ├── employeeRoutes.js                             # Employee routes
+│   │   └── leaveRoutes.js                                # Leave routes
 │
-│   ├── services/                     # Helper/service functions
-│   │   ├── attendance.js             # Attendance utility functions
-│   │   └── generateToken.js          # JWT token generation
+│   ├── services/                                         # Helper/service functions
+│   │   ├── attendance.js                                 # Attendance utility functions
+│   │   └── generateToken.js                              # JWT token generation
 │
-│   ├── utils/                        # Reusable utilities
-│   │   ├── apiResponse.js            # Standard success response
-│   │   ├── appError.js               # Custom error response handler
-│   │   ├── createSuperAdmin.js       # Script to create super admin
-│   │   └── statusCode.js             # HTTP status codes
+│   ├── utils/                                            # Reusable utilities
+│   │   ├── apiResponse.js                                # Standard success response
+│   │   ├── appError.js                                   # Custom error response handler
+│   │   ├── createSuperAdmin.js                           # Script to create super admin
+│   │   └── statusCode.js                                 # HTTP status codes
 │
-│   ├── cron/                         # Scheduled jobs
-│   │   └── autoCheckOut.js           # Auto checkout at 12 PM
+│   ├── cron/                                            # Scheduled jobs
+│   │   └── autoCheckOut.js                              # Auto checkout at 12 PM
 │
-│   └── app.js                        # Express app configuration
+│   └── app.js                                           # Express app configuration
 │
-├── .env                              # Environment variables
-├── .gitignore                        # Ignored files for git
-├── index.js                          # Application entry point
-├── package.json                      # Project dependencies
-└── package-lock.json                 # Dependency lock file
+├── .env                                                 # Environment variables
+├── .gitignore                                           # Ignored files for git
+├── index.js                                             # Application entry point
+├── package.json                                         # Project dependencies
+└── package-lock.json                                    # Dependency lock file
 
 ## Contributing
 
