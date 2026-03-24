@@ -11,9 +11,9 @@ cd hr-management
 # 2. Install dependencies
 npm install
 
-# 3. Start the server (using nodemon)
+# 3. Start the server
 npx nodemon index.js
-# or if you added a start script in package.json:
+# or
 npm start
 
 # 4. (Optional) Create a super admin
@@ -40,7 +40,8 @@ The **HR Management System** is a backend application designed to automate HR pr
 * Admin can register employees; employees can log in themselves
 * Role-based access control (Admin, HR, Employee)
 * JWT-based authentication
-* APIs: Login and Register
+
+---
 
 ### Employee Module
 
@@ -49,12 +50,16 @@ The **HR Management System** is a backend application designed to automate HR pr
 * Admin and HR can manage employee data
 * Employees can view their own profile
 
+---
+
 ### Leave Module
 
 * Leave application and approval workflow
 * Employees can apply for leave
 * Admin and HR can approve/reject leave requests
 * Employees can view their leave history
+
+---
 
 ### Attendance Module
 
@@ -65,37 +70,59 @@ The **HR Management System** is a backend application designed to automate HR pr
 
 ---
 
+### Validation (Joi)
+
+* Request validation using Joi
+* Centralized validation middleware
+* Supports validation for:
+
+  * Request body
+  * Query parameters
+  * Route params
+* Prevents invalid data from reaching controllers
+
+---
+
+### Pagination
+
+* Pagination support for large datasets
+* Used in Employees, Attendance, and Leave modules
+* Improves performance and response time
+
+---
+
 ## Tech Stack
 
 * **Backend:** Node.js, JavaScript
 * **Database:** MongoDB
 * **API Testing:** Postman
 * **Authentication:** JWT
-* **Cron Jobs:** Node Cron for automated attendance checkout
+* **Validation:** Joi
+* **Cron Jobs:** Node Cron
 
 ---
 
 ## Installation & Setup
 
-1. **Clone the repository:**
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/lavishagehlot1/hr-management.git
 ```
 
-2. **Navigate to the project folder:**
+2. Navigate to project:
 
 ```bash
 cd hr-management
 ```
 
-3. **Install dependencies:**
+3. Install dependencies:
 
 ```bash
 npm install
 ```
 
-4. **Create a `.env` file** with the following variables:
+4. Create `.env` file:
 
 ```env
 PORT=3000
@@ -103,116 +130,158 @@ MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 ```
 
-5. **Run the application:**
+5. Run the app:
 
 ```bash
 npx nodemon index.js
 ```
 
-> Alternatively, add `"start": "nodemon index.js"` to `package.json` scripts and run `npm start`.
-
-6. **(Optional) Seed the database to create a super admin user:**
-
-```bash
-node src/utils/createSuperAdmin.js
-```
-
-> ⚠️ Make sure `.env` has the correct `MONGO_URI` before running this script.
-
 ---
 
 ## Usage
 
-* **Admin:** Manage employees, approve/reject leaves, and view all attendance.
-* **HR:** Update employee info, approve/reject leaves, and view all attendance.
-* **Employees:** Register, login, apply for leave, check-in/check-out, and view their own profile and attendance.
+### Roles
 
-> For protected routes, include the JWT token in Postman:
+* **Admin:** Manage employees, approve/reject leaves, view attendance
+* **HR:** Update employees, approve/reject leaves, view attendance
+* **Employee:** Login, apply leave, check-in/out, view profile
+
+---
+
+### Pagination Example
 
 ```text
-Authorization: Bearer <token>
+GET /employees?page=1&limit=10
+GET /attendance/all?page=2&limit=5
+GET /leave/requests?page=1&limit=20
 ```
 
 ---
 
 ## API Reference
 
-| Module         | Endpoint               | Method | Role(s) Allowed     | Description                                              |
-| -------------- | ---------------------- | ------ | ------------------- | -------------------------------------------------------- |
-| **Auth**       | `/login`               | POST   | Admin, Employee, HR | User login with JWT authentication                       |
-|                | `/register`            | POST   | Admin               | Register a new employee                                  |
-| **Employee**   | `/employees`           | POST   | Admin               | Create employee                                          |
-|                | `/employees`           | GET    | Admin, HR           | Get all employees                                        |
-|                | `/employees/:id`       | GET    | Admin, HR           | Get employee by ID                                       |
-|                | `/employees/:id`       | PUT    | Admin, HR           | Update employee by ID                                    |
-|                | `/employees/:id`       | DELETE | Admin               | Delete employee                                          |
-|                | `/employees/profile`   | GET    | Employee            | Get own profile                                          |
-| **Leave**      | `/leave/apply`         | POST   | Employee            | Apply for leave                                          |
-|                | `/leave/reject/:id`    | POST   | Admin, HR           | Reject leave request by ID                               |
-|                | `/leave/approve/:id`   | POST   | Admin, HR           | Approve leave request by ID                              |
-|                | `/leave/history`       | GET    | Employee            | View own leave history                                   |
-|                | `/leave/requests`      | GET    | Admin, HR           | View all leave requests                                  |
-| **Attendance** | `/attendance/checkin`  | POST   | Employee            | Employee check-in                                        |
-|                | `/attendance/checkout` | POST   | Employee            | Employee check-out                                       |
-|                | `/attendance/me`       | GET    | Employee            | View own attendance                                      |
-|                | `/attendance/all`      | GET    | Admin, HR           | View all attendance records                              |
-| **Cron Job**   | N/A                    | N/A    | System              | Automatically checks out employees at 12 PM if forgotten |
+| Module     | Endpoint               | Method | Role(s) Allowed | Description        |
+| ---------- | ---------------------- | ------ | --------------- | ------------------ |
+| Auth       | `/login`               | POST   | All             | Login              |
+|            | `/register`            | POST   | Admin           | Register employee  |
+| Employee   | `/employees`           | POST   | Admin           | Create employee    |
+|            | `/employees`           | GET    | Admin, HR       | Get all employees  |
+|            | `/employees/:id`       | GET    | Admin, HR       | Get employee by ID |
+|            | `/employees/:id`       | PUT    | Admin, HR       | Update employee    |
+|            | `/employees/:id`       | DELETE | Admin           | Delete employee    |
+|            | `/employees/profile`   | GET    | Employee        | Own profile        |
+| Leave      | `/leave/apply`         | POST   | Employee        | Apply leave        |
+|            | `/leave/approve/:id`   | POST   | Admin, HR       | Approve leave      |
+|            | `/leave/reject/:id`    | POST   | Admin, HR       | Reject leave       |
+|            | `/leave/history`       | GET    | Employee        | Leave history      |
+|            | `/leave/requests`      | GET    | Admin, HR       | All leave requests |
+| Attendance | `/attendance/checkin`  | POST   | Employee        | Check-in           |
+|            | `/attendance/checkout` | POST   | Employee        | Check-out          |
+|            | `/attendance/me`       | GET    | Employee        | Own attendance     |
+|            | `/attendance/all`      | GET    | Admin, HR       | All attendance     |
+
+>  These endpoints support pagination using `page` and `limit`.
+
+---
+
+## Validation Middleware
+
+Centralized Joi validation middleware:
+
+```js
+router.post(
+  "/login",
+  validate({ body: loginSchema }),
+  loginUser
+);
+```
+
+Supports:
+
+* `body`
+* `query`
+* `params`
+
+---
+
+## Example Joi Schema
+
+```js
+import Joi from "joi";
+
+export const loginSchema = Joi.object({
+  userEmail: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+});
+```
 
 ---
 
 ## Project Structure
 
-```text
 hr-management/
 ├── src/
 │   ├── config/
-│   │   └── db.js                          # MongoDB connection setup
-│   ├── controllers/
+│   │   └── db.js                      # MongoDB connection setup
+│
+│   ├── controllers/                  # Business logic for each module
 │   │   ├── authController/
-│   │   │   └── authController.js          # Auth APIs: login, register
+│   │   │   └── authController.js     # Handles login & registration
 │   │   ├── employeeController/
-│   │   │   └── employeeController.js     # Employee APIs
+│   │   │   └── employeeController.js # Employee CRUD operations
 │   │   ├── attendanceController/
-│   │   │   └── attendanceController.js   # Attendance APIs
+│   │   │   └── attendanceController.js # Check-in, check-out logic
 │   │   └── leaveController/
-│   │       └── leaveController.js        # Leave APIs
-│   ├── models/
-│   │   ├── attendanceModel.js             # Attendance schema
-│   │   ├── authModel.js                   # Auth schema
-│   │   ├── leaveModel.js                  # Leave schema
-│   │   └── employeeModel.js               # Employee schema
-│   ├── middlewares/
-│   │   ├── authMiddleware.js              # JWT authentication
-│   │   ├── globalErrorHandler.js          # Global error handler
-│   │   └── authorizeRole.js               # Role-based access control
-│   ├── routes/
-│   │   ├── authRoutes.js                  # Auth routes
-│   │   ├── attendanceRoutes.js            # Attendance routes
-│   │   ├── employeeRoutes.js              # Employee routes
-│   │   └── leaveRoutes.js                 # Leave routes
-│   ├── services/
-│   │   ├── attendance.js                  # Attendance helper functions
-│   │   └── generateToken.js               # JWT generation helper
-│   ├── utils/
-│   │   ├── apiResponse.js                 # Standardized API response
-│   │   ├── appError.js                    # Custom error handling class
-│   │   ├── createSuperAdmin.js            # Super admin creation script
-│   │   └── statusCode.js                  # Standard HTTP status codes
-│   ├── cron/
-│   │   └── autoCheckOut.js                # Cron job for automatic checkout
-│   └── app.js                              # Express app setup
-├── .env                                    # Environment variables
-├── .gitignore                              # Files to ignore in Git
-├── index.js                                # Application entry point
-├── package.json                            # Node.js dependencies
-└── package-lock.json                       # Dependency lock file
-```
-
----
+│   │       └── leaveController.js    # Leave apply/approve/reject logic
+│
+│   ├── models/                       # Mongoose schemas
+│   │   ├── attendanceModel.js        # Attendance schema
+│   │   ├── authModel.js              # User/Auth schema
+│   │   ├── leaveModel.js             # Leave schema
+│   │   └── employeeModel.js          # Employee schema
+│
+│   ├── validations/                  # Joi validation schemas (NEW)
+│   │   ├── authValidation.js         # Login & register validation
+│   │   ├── employeeValidation.js     # Employee validation rules
+│   │   ├── attendanceValidation.js   # Attendance validation rules
+│   │   └── leaveValidation.js        # Leave validation rules
+│
+│   ├── middlewares/                  # Custom middlewares
+│   │   ├── authMiddleware.js         # JWT authentication middleware
+│   │   ├── authorizeRole.js          # Role-based access control
+│   │   ├── globalErrorHandler.js     # Handles all errors globally
+│   │   └── validate.js               # Joi validation middleware (NEW)
+│
+│   ├── routes/                       # API route definitions
+│   │   ├── authRoutes.js             # Auth routes
+│   │   ├── attendanceRoutes.js       # Attendance routes
+│   │   ├── employeeRoutes.js         # Employee routes
+│   │   └── leaveRoutes.js            # Leave routes
+│
+│   ├── services/                     # Helper/service functions
+│   │   ├── attendance.js             # Attendance utility functions
+│   │   └── generateToken.js          # JWT token generation
+│
+│   ├── utils/                        # Reusable utilities
+│   │   ├── apiResponse.js            # Standard success response
+│   │   ├── appError.js               # Custom error response handler
+│   │   ├── createSuperAdmin.js       # Script to create super admin
+│   │   └── statusCode.js             # HTTP status codes
+│
+│   ├── cron/                         # Scheduled jobs
+│   │   └── autoCheckOut.js           # Auto checkout at 12 PM
+│
+│   └── app.js                        # Express app configuration
+│
+├── .env                              # Environment variables
+├── .gitignore                        # Ignored files for git
+├── index.js                          # Application entry point
+├── package.json                      # Project dependencies
+└── package-lock.json                 # Dependency lock file
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. Open an issue first for major changes.
 
 ---
 
@@ -220,5 +289,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 This project is licensed under the MIT License.
 
----
 
