@@ -52,7 +52,7 @@ export const getAllEmployee=async(req,res,next)=>{
         const{page,limit,skip}=getPagination(req);
 
         const allEmployee=await employee.find()
-                                        .populate("userId","userName userEmail")
+                                        .populate("userId","userFirstName userLastName userEmail")
                                         .skip(skip) //if skip =10 then it will skip first 10 records and show from the 11th record.
                                         .limit(limit);
 
@@ -94,7 +94,7 @@ export const getEmployeeById=async(req,res,next)=>{
         const employeeId=req.params.id;
         console.log("employeeID:",employeeId);
 
-        const _employee=await employee.findById(employeeId).populate("userId","userName userEmail-_id");
+        const _employee=await employee.findById(employeeId).populate("userId","userFirstName userLastName userEmail-_id");
         if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee not found!");
 
         return res.status(statusCode.SUCCESS).json(
@@ -193,7 +193,7 @@ export const deleteEmployeeById=async(req,res,next)=>{
         const {id}=req.params;
         console.log("ID FROM PARAMS:",req.params);
 
-        const delete_employee=await employee.findById(id).populate("userId","userName userEmail-_id");
+        const delete_employee=await employee.findById(id).populate("userId","userFirstName userLastName userEmail-_id");
         if(!delete_employee) return AppError(res,statusCode.NOT_FOUND,"employee is not found")
 
             return res.status(statusCode.SUCCESS).json(apiResponse(

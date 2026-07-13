@@ -6,9 +6,9 @@ import { generateToken } from "../../services/generateToken.js";
 export const registerUser=async(req,res,next)=>{
     try{
         //data from postman
-        const {userName,userEmail,password,role}=req.body;
+        const {userFirstName,userLastName,userEmail,password,role}=req.body;
         console.log("Data coming from postman:",req.body);
-        if(!userName||!userEmail||!password||!role){
+        if(!userFirstName||!userLastName||!userEmail||!password||!role){
             return AppError(res,statusCode.BAD_REQUEST,"All fileds are required")
         };
 
@@ -18,7 +18,8 @@ export const registerUser=async(req,res,next)=>{
         return AppError(res,statusCode.CONFLICT,`User with ${userEmail} is already exist`);
 
         const users= await user.create({
-            userName,
+            userFirstName,
+            userLastName,
             userEmail,
             password,
             role
@@ -28,7 +29,7 @@ export const registerUser=async(req,res,next)=>{
         // 
 
         return res.status(statusCode.SUCCESS).json(
-  apiResponse(statusCode.SUCCESS, `User ${users.userName} registered  successfully`, { users })
+  apiResponse(statusCode.SUCCESS, `User ${users.userFirstName} registered  successfully`, { users })
 );
          }catch(err){
         console.log("Server error:",err)

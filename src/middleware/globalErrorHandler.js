@@ -16,4 +16,4 @@ import  statusCode from "../utilis/statusCode.js";
         message:"Internal server error"
     })
 }
-export default globalErrorHandler
+export default globalErrorHandler;
