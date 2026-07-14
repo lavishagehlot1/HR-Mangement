@@ -19,6 +19,7 @@
 //single validation middlewarefor all body,query and params.
 
 export const validate = (schemas) => (req, res, next) => {
+    console.log("Request Body:", req.body);
   try {
     //  schemas = { body: JoiSchema, query: JoiSchema, params: JoiSchema }
 

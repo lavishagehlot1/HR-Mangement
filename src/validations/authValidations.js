@@ -1,7 +1,8 @@
 import Joi from 'joi';
 
 export const registerSchema=Joi.object({
-    userName:Joi.string().min(3).required(),
+    userFirstName:Joi.string().min(3).required(),
+    userLastName:Joi.string().min(3).required(),
     userEmail: Joi.string()
     .email({ tlds: { allow: false } }) // avoid strict TLD errors
     .required()
