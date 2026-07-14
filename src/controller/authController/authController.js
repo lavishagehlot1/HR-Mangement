@@ -58,7 +58,7 @@ export const loginUser=async(req,res,next)=>{
         return res.status(statusCode.SUCCESS).json(
                         apiResponse(
                             statusCode.SUCCESS,
-                            `User ${users.userName} is login sucessfully`,
+                            `User ${users.userFirstName} is login sucessfully`,
                             {token}
 
             )
