@@ -1,23 +1,38 @@
-import mongoose from 'mongoose';
-const employeeSchema=new mongoose.Schema({
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true,
-        
+import mongoose from "mongoose";
+import { DEPARTMENTS } from "../constants/department.js";
+import { JOB_ROLES } from "../constants/jobRoles.js";
+
+const employeeSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
     },
-    department:{
-        type:String,
-        required:true
+
+    department: {
+      type: String,
+      enum: DEPARTMENTS,
+      required: true,
     },
-    role_of_employee:{
-        type:String,
-        required:true
+
+    roleOfEmployee: {
+      type: String,
+      enum: JOB_ROLES,
+      required: true,
     },
-    joining_Date:{
-        type:Date,
-        required:true
-    }
-},{timestamps:true});
-const employee=mongoose.model('employee',employeeSchema);
-export default employee;
+
+    joiningDate: {
+      type: Date,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const Employee = mongoose.model("Employee", employeeSchema);
+
+export default Employee;

@@ -1,34 +1,54 @@
-import mongoose from 'mongoose';
-const leaveSchema=new mongoose.Schema({
-    employee_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"employee"
-    },
-    leaveType:{
-        type:String,
-        required:true,
-        trim:true
-    },
-    start_Date:{
-        type:Date,
-        required:true,
+import mongoose from "mongoose";
+import { LEAVE_STATUS } from "../constants/leaveStatus.js";
+import { LEAVE_TYPES } from "../constants/leaveTypes.js";
 
+const leaveSchema = new mongoose.Schema(
+  {
+    employeeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Employee",
+      required: true,
+    },
 
+    leaveType: {
+      type: String,
+      enum: LEAVE_TYPES,
+      required: true,
+      trim: true,
     },
-    end_Date:{
-        type:Date,
-        required:true
+
+    startDate: {
+      type: Date,
+      required: true,
     },
-    reason:{
-        type:String,
-        required:true,
-        minLength:[8,"Reason should be atleast of 8 characters"]
+
+    endDate: {
+      type: Date,
+      required: true,
     },
-    status_of_leave:{
-        type:String,
-        enum:["pending","approved","rejected"],
-        default:"pending"
-    }
-},{timestamps:true});
-const leave= mongoose.model("leave",leaveSchema);
-export default leave;
+
+    reason: {
+      type: String,
+      required: true,
+      minlength: [8, "Reason should be at least 8 characters"],
+    },
+
+    status: {
+      type: String,
+      enum: LEAVE_STATUS,
+      default: "pending",
+    },
+
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const Leave = mongoose.model("Leave", leaveSchema);
+
+export default Leave;

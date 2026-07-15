@@ -1,8 +1,9 @@
-import employee from "../../models/employeeModel.js";
+import Employee from "../../models/employeeModel.js";
 import AppError from "../../utilis/appError.js";
 import  statusCode  from "../../utilis/statusCode.js";
 import { apiResponse } from "../../utilis/apiResponse.js";
 import { getPagination } from "../../utilis/pagination.js";
+import LeaveBalance from "../../models/leaveBalanceModel.js";
 /**
  * POST request
  * createEmployee controller
@@ -10,33 +11,38 @@ import { getPagination } from "../../utilis/pagination.js";
 export const createEmployee=async(req,res,next)=>{
     try{
         //data coming from potman
-        const{userId,department,role_of_employee,joining_Date}=req.body;
+        const{userId,department,roleOfEmployee,joiningDate}=req.body;
         console.log("Data coming from postman",req.body);
-        if(!userId||!department||!role_of_employee||!joining_Date){
+        if(!userId||!department||!roleOfEmployee||!joiningDate){
             return AppError(res,statusCode.BAD_REQUEST,"All fields are required");
         }
 
         //find if user is already exist
-        const existingEmployee=await employee.findOne({userId});
+        const existingEmployee=await Employee.findOne({userId});
         if(existingEmployee)return AppError(res,statusCode.CONFLICT,"Employee is already exist");
 
         //create new employee
-        const _employee=await employee.create({
+        const _employee=await Employee.create({
             userId,
             department,
-            joining_Date,
-            role_of_employee
+            joiningDate,
+            roleOfEmployee
         });
         console.log("Employee is created",_employee);
+        const leaveBalance=await LeaveBalance.create({
+            employeeId:_employee._id
+        })
         return res.status(statusCode.SUCCESS).json(
             apiResponse(statusCode.SUCCESS,
                 `Employee  is created sucessfully`,
-                {_employee}
+                {_employee,
+                    leaveBalance
+                }
             )
         )
 
 }catch(err){
-        console.log("Server Error:",err.name)
+        console.error("Server Error:",err)
         next(err);//end it to global err
             }
 }
@@ -51,13 +57,13 @@ export const getAllEmployee=async(req,res,next)=>{
     try{
         const{page,limit,skip}=getPagination(req);
 
-        const allEmployee=await employee.find()
+        const allEmployee=await Employee.find()
                                         .populate("userId","userFirstName userLastName userEmail")
                                         .skip(skip) //if skip =10 then it will skip first 10 records and show from the 11th record.
                                         .limit(limit);
 
         //total count of employee
-        const totalEmployee=await employee.countDocuments(); //countDocuments-->It is a MongoDB method that:
+        const totalEmployee=await Employee.countDocuments(); //countDocuments-->It is a MongoDB method that:
                                                             //Counts how many documents (records) exist in a collection
         console.log("Total employee:",totalEmployee);
 
@@ -80,7 +86,7 @@ export const getAllEmployee=async(req,res,next)=>{
             )
         )
     }catch(err){
-        console.log("Server Error:",err.name)
+        console.error("Server Error:",err)
         next(err);//end it to global err
             }
 }
@@ -94,7 +100,9 @@ export const getEmployeeById=async(req,res,next)=>{
         const employeeId=req.params.id;
         console.log("employeeID:",employeeId);
 
-        const _employee=await employee.findById(employeeId).populate("userId","userFirstName userLastName userEmail-_id");
+        const _employee=await Employee.findById(employeeId).populate(
+            "userId",
+            "userFirstName userLastName userEmail -_id");
         if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee not found!");
 
         return res.status(statusCode.SUCCESS).json(
@@ -105,7 +113,7 @@ export const getEmployeeById=async(req,res,next)=>{
         )
 
     }catch(err){
-        console.log("Server Error:",err.name)
+        console.error("Server Error:",err)
         next(err);//end it to global err
             }
 }
@@ -123,15 +131,18 @@ export const updateEmployeeById=async(req,res,next)=>{
         const employeeId=req.params.id;
         console.log("EmployeeId",employeeId);
 
-        const{department,role_of_employee,joining_Date}=req.body;
+        const{department,roleOfEmployee,joiningDate}=req.body;
         console.log("data from postman",req.body)
 
-        const _employee=await employee.findByIdAndUpdate(
+        const _employee=await Employee.findByIdAndUpdate(
            employeeId,
         {department,
-        role_of_employee,
-        joining_Date},
-        {new:true}
+        roleOfEmployee,
+        joiningDate},
+        {    
+            new:true,
+            runValidators:true
+        }
         );
         console.log("EMPLOYEE DETAILS:",_employee)
         if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee not found!");
@@ -148,7 +159,7 @@ export const updateEmployeeById=async(req,res,next)=>{
 
 
     }catch(err){
-        console.log("Server Error:",err.name)
+        console.error("Server Error:",err)
         next(err);//end it to global err
             }
 }
@@ -165,7 +176,7 @@ export const getMyProfile=async(req,res,next)=>{
 
         //find employee by id
         //const myProfile=await employee.findById(userID); //this will search for specific id and findById({userID:userID})
-        const myProfile = await employee.findOne({ userId: userID }); //findOne searches any field you specify
+        const myProfile = await Employee.findOne({ userId: userID }); //findOne searches any field you specify
         //see if profile is not exist
         if(!myProfile) return AppError(res,statusCode.NOT_FOUND,"profile doesn't exist");
 
@@ -179,7 +190,7 @@ export const getMyProfile=async(req,res,next)=>{
 );
 
     }catch(err){
-        console.log("Server Error:",err.name)
+        console.error("Server Error:",err)
         next(err);//end it to global err
     }
 }
@@ -193,17 +204,21 @@ export const deleteEmployeeById=async(req,res,next)=>{
         const {id}=req.params;
         console.log("ID FROM PARAMS:",req.params);
 
-        const delete_employee=await employee.findById(id).populate("userId","userFirstName userLastName userEmail-_id");
-        if(!delete_employee) return AppError(res,statusCode.NOT_FOUND,"employee is not found")
+        const deleteEmployee=await Employee.findByIdAndDelete(id).populate("userId",
+            "userFirstName userLastName userEmail -_id");
+        if(!deleteEmployee) return AppError(res,statusCode.NOT_FOUND,"employee is not found")
 
+             await LeaveBalance.findOneAndDelete({
+                employeeId:id
+            })
             return res.status(statusCode.SUCCESS).json(apiResponse(
                 statusCode.SUCCESS,
                 "Employee is deleted sucessfully",
-                {delete_employee}
-            ))
-
+                {deleteEmployee}
+            ));
+           
     }catch(err){
-        console.log("SERVER ERROR:",err.name);
+        console.error("SERVER ERROR:",err);
         next(err);
     }
 }

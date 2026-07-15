@@ -59,7 +59,16 @@ export const loginUser=async(req,res,next)=>{
                         apiResponse(
                             statusCode.SUCCESS,
                             `User ${users.userFirstName} is login sucessfully`,
-                            {token}
+                            {token,
+                                user:{
+                                        id: users._id,
+                                        userFirstName: users.userFirstName,
+                                        userLastName: users.userLastName,
+                                        userEmail: users.userEmail,
+                                        role: users.role
+
+                                }
+                            }
 
             )
         )

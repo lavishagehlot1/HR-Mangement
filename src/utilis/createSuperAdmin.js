@@ -21,7 +21,8 @@ const createSuperAdmin=async()=>{
         
         //create super admin
         const admin=await user.create({
-            userName:"Ishika raut",
+            userFirstName: "Ishika",
+            userLastName: "sharma",
             userEmail:superAdminEmail,
             password:hashedPassword,
             role:"admin" //superior admin
