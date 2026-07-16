@@ -4,11 +4,14 @@ import  statusCode  from "../../utilis/statusCode.js";
 import { apiResponse } from "../../utilis/apiResponse.js";
 import { getPagination } from "../../utilis/pagination.js";
 import LeaveBalance from "../../models/leaveBalanceModel.js";
+import user from "../../models/authModels.js";
+import mongoose from "mongoose";
 /**
  * POST request
  * createEmployee controller
  */
 export const createEmployee=async(req,res,next)=>{
+    let session;
     try{
         //data coming from potman
         const{userId,department,roleOfEmployee,joiningDate}=req.body;
@@ -16,32 +19,48 @@ export const createEmployee=async(req,res,next)=>{
         if(!userId||!department||!roleOfEmployee||!joiningDate){
             return AppError(res,statusCode.BAD_REQUEST,"All fields are required");
         }
-
-        //find if user is already exist
+                //find if user is already exist
         const existingEmployee=await Employee.findOne({userId});
         if(existingEmployee)return AppError(res,statusCode.CONFLICT,"Employee is already exist");
 
+        //check if user is already exiting or not
+        const existigUser=await user.findById(userId);
+        if(!existigUser) return AppError(res,statusCode.NOT_FOUND,"User not found!")
+
+        session=await mongoose.startSession();
+        session.startTransaction();
         //create new employee
-        const _employee=await Employee.create({
-            userId,
+        const _employee=await Employee.create(
+            [{
+                userId,
             department,
             joiningDate,
-            roleOfEmployee
-        });
+            roleOfEmployee}],
+        {session});
         console.log("Employee is created",_employee);
-        const leaveBalance=await LeaveBalance.create({
-            employeeId:_employee._id
-        })
+        //create leave balance
+        const leaveBalance=await LeaveBalance.create([{
+            employeeId:_employee[0]._id
+        }],
+    {
+        session
+    });
+        await session.commitTransaction();
+        await session.endSession();
         return res.status(statusCode.SUCCESS).json(
             apiResponse(statusCode.SUCCESS,
                 `Employee  is created sucessfully`,
-                {_employee,
+                {   _employee,
                     leaveBalance
                 }
             )
         )
 
 }catch(err){
+    if(session){
+        await session.abortTransaction();
+        await session.endSession();
+    }
         console.error("Server Error:",err)
         next(err);//end it to global err
             }
@@ -200,17 +219,43 @@ export const getMyProfile=async(req,res,next)=>{
  * delete_by_id
  */
 export const deleteEmployeeById=async(req,res,next)=>{
+       let session;
     try{
+        session=await mongoose.startSession();
+        session.startTransaction();
         const {id}=req.params;
         console.log("ID FROM PARAMS:",req.params);
 
-        const deleteEmployee=await Employee.findByIdAndDelete(id).populate("userId",
-            "userFirstName userLastName userEmail -_id");
-        if(!deleteEmployee) return AppError(res,statusCode.NOT_FOUND,"employee is not found")
-
+        const deleteEmployee=await Employee.findById(id).session(session)
+        if(!deleteEmployee) {
+            await session.abortTransaction();
+            session.endSession();
+             return AppError(
+                res,
+                statusCode.NOT_FOUND,
+                "employee is not found"
+            );
+        }
+           
+            //DElete leave balance
              await LeaveBalance.findOneAndDelete({
                 employeeId:id
-            })
+            },{session});
+
+            //Delete user
+            await user.findByIdAndDelete(
+                deleteEmployee.userId,
+                {session}
+            )
+
+            //Delete employee
+            await Employee.findByIdAndDelete(
+                deleteEmployee._id,
+                {session}
+            );
+
+            await session.commitTransaction();
+            session.endSession()
             return res.status(statusCode.SUCCESS).json(apiResponse(
                 statusCode.SUCCESS,
                 "Employee is deleted sucessfully",
@@ -218,6 +263,10 @@ export const deleteEmployeeById=async(req,res,next)=>{
             ));
            
     }catch(err){
+        if(session){
+            await session.abortTransaction();
+            session.endSession();
+        }
         console.error("SERVER ERROR:",err);
         next(err);
     }
