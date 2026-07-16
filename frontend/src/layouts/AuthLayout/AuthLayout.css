@@ -1,0 +1,29 @@
+.grad1{
+    height: 100vh;
+    background-color: #feb47b;
+    background: linear-gradient(to right, #a2ddd8, #e492cc);
+}
+.authCard{
+    width: 100%;
+    max-width: 1400px;
+    min-height: 650px;
+    display: flex;
+}
+.right-panel{
+    background-color: #C0DBEA;
+    overflow: visible;
+}
+.girl-img{
+    position: absolute;
+    bottom: 0;
+    left:-221px;
+    width: 500px;
+    z-index: 2;
+}
+.cactus-img{
+    position: absolute;
+    right: 175px;
+    bottom: 28px;
+    width: 127px;
+    z-index: 1;
+}
