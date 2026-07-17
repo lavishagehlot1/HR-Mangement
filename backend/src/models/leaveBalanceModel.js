@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { LEAVE_POLICY } from "../constants/leavePolicy";
+import { LEAVE_POLICY } from "../constants/leavePolicy.js";
 
 const leaveBalanceSchema=new mongoose.Schema({
     employee_id:{

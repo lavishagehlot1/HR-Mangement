@@ -30,7 +30,7 @@ const attendanceSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ATTENDANCE_STATUS,
-      default: "present",
+      default: "pending",
     },
 
     autoCheckedOut: {

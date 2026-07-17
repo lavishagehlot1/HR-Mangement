@@ -6,6 +6,7 @@ import authRouter from './src/routes/authRoutes.js';
 import employeeRoute from './src/routes/employeeRoute.js'
 import leaveRoute from './src/routes/leaveRoute.js'
 import attendanceRoute from './src/routes/attendanceRoute.js'
+import dashboardRouter from './src/routes/dashboardRoutes.js'
 dotenv.config();
 await connectDB();
 
@@ -13,6 +14,7 @@ app.use('/api/mangement',authRouter);
 app.use('/api/mangement',employeeRoute);
 app.use('/api/mangement',leaveRoute);
 app.use('/api/mangement',attendanceRoute);
+app.use('/api/management',dashboardRouter);
 
 
 

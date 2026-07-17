@@ -5,6 +5,7 @@ export const authorize=(...roles)=>{ //rest parameter so you can pass multiple r
     return(req,res,next)=>{
         //user role extracted from token coming from authentication middleware.
         const role=req.user.role;
+        console.log('Role',role)
         if(!roles.includes(role)){ //user role is in the list of allowed roles
             return AppError(res,statusCode.FORBIDDEN,"You dont have access")
         }

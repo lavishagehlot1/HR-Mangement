@@ -1,11 +1,12 @@
 import cron from 'node-cron';
-import { processCheckout } from "../services/attendanceService";
+import { processCheckout } from "../services/attendanceService.js";
 cron.schedule('59 23 * * *',async()=>{
     console.log("Running cron");
+    const count=await processCheckout();
+ console.log(`Checked out ${count} employee`)
 });
 
- const count=await processCheckout();
- console.log(`Checked out ${count} employee`)
+ 
 
  /**try {
     // Find all employees who checked in but didn't check out
