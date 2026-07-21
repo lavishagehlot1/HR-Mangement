@@ -1,5 +1,3 @@
-import attendance from '../../models/attendanceModule.js';
-import employee from '../../models/employeeModel.js';
 import { apiResponse } from '../../utilis/apiResponse.js';
 import AppError from '../../utilis/appError.js';
 import statusCode from '../../utilis/statusCode.js';
@@ -17,7 +15,7 @@ export const employee_check_in=async(req,res,next)=>{
     console.log("USERID:",userId);
     
     //find employee linked with that user
-    let _employee=await employee.findOne({userId:userId});
+    let _employee=await Employee.findOne({userId:userId});
     if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee profile is not found")
 
     const todaysStart=new Date();
@@ -27,14 +25,14 @@ export const employee_check_in=async(req,res,next)=>{
     todaysEnd.setHours(23,59,59,999);
 
     //check if  employee is already checks-in today.
-    const existing=await attendance.findOne({
+    const existing=await Attendance.findOne({
         employeeId:_employee._id,
         date:{$gt:todaysStart,$lte:todaysEnd}
     });
     if(existing) return AppError(res,statusCode.CONFLICT,"You already checked-in");
 
     //create attendance record.
-    const record=await attendance.create({
+    const record=await Attendance.create({
         employeeId:_employee._id,
         checkInTime:new Date(),
        //record.check_in_time.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
@@ -66,7 +64,7 @@ export const employee_check_out=async(req,res,next)=>{
     console.log("USERID:",userId);
     
     //find employee linked with that user
-    let _employee=await employee.findOne({userId:userId});
+    let _employee=await Employee.findOne({userId:userId});
     if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee profile is not found")
 
     const todaysStart=new Date();
@@ -76,7 +74,7 @@ export const employee_check_out=async(req,res,next)=>{
     todaysEnd.setHours(23,59,59,999);
 
     //find todays attendance record
-    const record=await attendance.findOne({
+    const record=await Attendance.findOne({
         employeeId:_employee._id,
         date:{$gt:todaysStart,$lte:todaysEnd}
     });
@@ -124,11 +122,11 @@ export const view_all_attendance=async(req,res,next)=>{
     try{
         const {page,limit,skip}=getPagination(req);
 
-         const allAttendance=await attendance.find().sort({date:-1}).skip(skip).limit(limit);
+         const allAttendance=await Attendance.find().sort({date:-1}).skip(skip).limit(limit);
          console.log("ALL ATTANDANCE LIST:",allAttendance);
 
             //total count of attendance record
-            const totalAttendance=await attendance.countDocuments();
+            const totalAttendance=await Attendance.countDocuments();
 
          if(!allAttendance||allAttendance.length===0) return AppError(res,statusCode.NOT_FOUND,"No attendance found");
 
@@ -161,10 +159,10 @@ export const view_own_attendance=async(req,res,next)=>{
     console.log("USERID:",userId);
     
     //find employee linked with that user
-    let _employee=await employee.findOne({userId:userId});
+    let _employee=await Employee.findOne({userId:userId});
     if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee profile is not found")
         //find own attendance
-        const records=await attendance.find({employeeId:_employee._id}).sort({date:-1}) //latesst first
+        const records=await Attendance.find({employeeId:_employee._id}).sort({date:-1}) //latesst first
 
         return res.status(statusCode.OK_COMPLETED).json(apiResponse(
             statusCode.OK_COMPLETED,
@@ -206,18 +204,18 @@ export const todaysAttendance = async (req, res, next) => {
         const todaysEnd = new Date();
         todaysEnd.setHours(23, 59, 59, 999);
 
-        const todaysAttendance = await Attendance.findOne({
+        const todayAttendance = await Attendance.findOne({
             employeeId: _employee._id,
             date: {
                 $gte: todaysStart,
                 $lte: todaysEnd
             }
         })
-        if (!todaysAttendance) {
+        if (!todayAttendance) {
             return res.status(statusCode.SUCCESS).json(
                 apiResponse(
                     statusCode.SUCCESS,
-                    "Today's attendance fetched successfully",
+                    "You have not checked in today.",
                     {
                         checkedIn: false,
                         attendance: null
@@ -233,7 +231,7 @@ export const todaysAttendance = async (req, res, next) => {
                 "Today's attendance fetched successfully",
                 {
                     checkedIn: true,
-                    attendance: todaysAttendance
+                    attendance: todayAttendance
                 }
             )
         );

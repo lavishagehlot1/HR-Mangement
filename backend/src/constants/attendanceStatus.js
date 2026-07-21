@@ -1,5 +1,6 @@
 export const ATTENDANCE_STATUS = [
     "present",
     "absent",
-    "half day"
+    "half day",
+    'pending'
 ];

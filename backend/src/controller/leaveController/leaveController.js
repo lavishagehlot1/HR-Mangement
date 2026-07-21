@@ -1,5 +1,5 @@
-import employee from '../../models/employeeModel.js';
-import leave from '../../models/leaveModel.js';
+import Employee from '../../models/employeeModel.js';
+import Leave from '../../models/leaveModel.js';
 import { apiResponse } from '../../utilis/apiResponse.js';
 import AppError from '../../utilis/appError.js';
 import { getPagination } from '../../utilis/pagination.js';
@@ -20,7 +20,7 @@ export const apply_for_leave=async(req,res,next)=>{
         console.log("USERID:",userId);
 
         //find employee record link to that user
-        const _employee=await employee.findOne({userId:userId});
+        const _employee=await Employee.findOne({userId:userId});
         console.log("Employee:",_employee);
 
         if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee profile is not found");
@@ -28,7 +28,7 @@ export const apply_for_leave=async(req,res,next)=>{
         
 
         //create leave
-        const leaves=await leave.create({
+        const leaves=await Leave.create({
             employee_id:_employee._id,
             leaveType,
             start_Date,
@@ -75,10 +75,10 @@ export const viewLeaveRequest=async(req,res,next)=>{
                                             //If the client doesn’t send any status, the query stays {} → fetch all leaves
         
         // Count total leaves for pagination info
-    const totalLeaves = await leave.countDocuments(query)
+    const totalLeaves = await Leave.countDocuments(query)
         
         
-    const allLeaves=await leave.find(query)
+    const allLeaves=await Leave.find(query)
                                  .populate("employee_id","employeeName employeeId")  
                                 .skip(skip).limit(limit)
                                 .sort({createdAt:-1});//sort by createdAt in descending order
@@ -118,12 +118,12 @@ export const viewLeaveHistory=async(req,res,next)=>{
         console.log("user idfrom jwt",userID);
 
         //find employee linked with this user
-        let _employee=await employee.findOne({userId:userID});
+        let _employee=await Employee.findOne({userId:userID});
         console.log("employee from db",_employee);
         if(!_employee) return AppError(res,statusCode.NOT_FOUND,"Employee profil not found");
 
         //get only this employee leave
-        const leaveHistory=await leave.find({employee_id:_employee._id});
+        const leaveHistory=await Leave.find({employee_id:_employee._id});
         console.log("My leaves hitory",leaveHistory);
 
         return res.status(statusCode.OK_COMPLETED).json(
@@ -148,7 +148,7 @@ export const approveLeaveRequestById=async(req,res,next)=>{
         const leaveId=req.params.id;
         console.log("LEAVE ID:",leaveId);
 
-        const approveLeaves=await leave.findById({_id:leaveId});
+        const approveLeaves=await Leave.findById({_id:leaveId});
         console.log("leave:",approveLeaves);
         if(!approveLeaves) return AppError(res.statusCode.NOT_FOUND,"Leave request not found");
 
@@ -175,7 +175,7 @@ export const rejectLeaveById=async(req,res,next)=>{
     try{
         const{id}=req.params;
 
-        const rejectLeave=await leave.findById(id);
+        const rejectLeave=await Leave.findById(id);
         if(!rejectLeave) return AppError(res,statusCode.NOT_FOUND,"Leave request not found");
 
         //update status

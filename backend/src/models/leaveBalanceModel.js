@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { LEAVE_POLICY } from "../constants/leavePolicy.js";
 
 const leaveBalanceSchema=new mongoose.Schema({
-    employee_id:{
+    employeeId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'employee',
+        ref:'Employee',
         required:true,
         unique:true
     },

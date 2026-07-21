@@ -237,7 +237,7 @@ export const deleteEmployeeById=async(req,res,next)=>{
             );
         }
            
-            //DElete leave balance
+            //Delete leave balance
              await LeaveBalance.findOneAndDelete({
                 employeeId:id
             },{session});
