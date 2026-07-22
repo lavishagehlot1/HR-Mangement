@@ -14,7 +14,7 @@ app.use('/api/mangement',authRouter);
 app.use('/api/mangement',employeeRoute);
 app.use('/api/mangement',leaveRoute);
 app.use('/api/mangement',attendanceRoute);
-app.use('/api/management',dashboardRouter);
+app.use('/api/mangement',dashboardRouter);
 
 
 

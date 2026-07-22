@@ -38,6 +38,9 @@ export const createEmployee=async(req,res,next)=>{
             roleOfEmployee}],
         {session});
         console.log("Employee is created",_employee);
+     
+        console.log("_employee[0]:", _employee[0]);
+        console.log("_employee id:", _employee[0]._id);
         //create leave balance
         const leaveBalance=await LeaveBalance.create([{
             employeeId:_employee[0]._id
