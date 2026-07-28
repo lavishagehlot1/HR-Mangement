@@ -6,7 +6,7 @@ export default function AttendanceChart({ data }) {
                 <h4 className='mb-3'>
                     Attendance Overview
                 </h4>
-                <ResponsiveContainer width={500} height={300}>
+                <ResponsiveContainer width="100%"  height={300}>
                     <BarChart data={data}>
                         <CartesianGrid vertical={false}
                             stroke="#f1f5f9" />

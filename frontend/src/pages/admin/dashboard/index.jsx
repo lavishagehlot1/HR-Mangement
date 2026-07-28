@@ -2,6 +2,7 @@ import { dashboardCards } from './dashboardCardConfig'
 import '../dashboard/admin.css'
 import { useEffect, useState } from 'react';
 import { AdminDashboardServices } from '../../../services/dashboardServices';
+import DepartmentPieChart from './DepartmentPieChart';
 import { Row, Col } from 'react-bootstrap';
 import AttendanceChart from './attendanceChart';
 export default function AdminDashboard() {
@@ -50,6 +51,9 @@ export default function AdminDashboard() {
                 { status: "Half Day", count: dashboardData.halfDayToday },
             ];
     console.log('attendanceData', attendanceData);
+
+    const departmentData=dashboardData.DeparmentDistribution||[];
+    console.log('departmentData',departmentData);
     return (
         <>
             <div className=" ms-4 heading">
@@ -83,17 +87,20 @@ export default function AdminDashboard() {
                     ))}
                 </Row>
             </div>
-            <div>
-                <Row className="mt-4">
-                    <Col lg={8}>
-                        <AttendanceChart data={attendanceData} />
-                    </Col>
+            <Row className="mt-4 gx-4">
+                <Col lg={4} className="d-flex justify-content-center">
+                    <AttendanceChart data={attendanceData} />
+                </Col>
 
-                    <Col lg={4}>
-                        <DepartmentPieChart data={departmentData} />
-                    </Col>
-                </Row>
-            </div>
+                <Col lg={4} className="d-flex justify-content-center">
+                    <DepartmentPieChart data={departmentData} />
+                </Col>
+                <Col lg={4} className="d-flex justify-content-center">
+                    <DepartmentPieChart data={departmentData} />
+                </Col>
+            </Row>
+           
+
 
         </>
     )

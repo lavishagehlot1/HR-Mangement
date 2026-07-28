@@ -7,25 +7,21 @@ export default function AdminLayout(){
     <div>
         <Container fluid>
 
-                <Row className="min-vh-100">
+                <Row className="vh-100">
                     {/**Left panel */}
                     <Col xs={12} md={6} lg={2} className="left-panel">
                     <SideBar className='mt-4'/>
                     </Col>
                     {/**Right panel */}
                     <Col xs={12} md={6} lg={10} className="right-panel px-0">
-                    <Col xs={12} md={12} lg={12}>
+                   
                     <div className="navbar">
                         <div>Search</div>
                         <div>admin</div>
                     </div>
-
-                    </Col>
-                    <Col xs={12} md={12} lg={12}
-                    className="main-content min-vh-100">
-                      <Outlet/>
-                    </Col>
-                  
+                    <div className="main-content">
+                        <Outlet />
+                    </div>
                     </Col>
                 </Row>
 

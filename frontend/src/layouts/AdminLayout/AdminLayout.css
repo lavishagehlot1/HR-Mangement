@@ -5,19 +5,31 @@
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
-    gap:74px
+    gap:74px;
+    height: 100v;
+    position: sticky;
+    top: 0;
+    overflow: hidden;
 }
 
 .right-panel{
     background-color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
 }
 .navbar{
     display: flex;
     justify-content: space-between;
     max-height: 100px;
-    height:100px;
+    height:70px;
     border-bottom: 1px solid #F8F8FB;
 }
 .main-content{
     background-color:#F8F8FB;
+     flex: 1;
+    overflow-y: auto;
+    padding: 20px;
 }
