@@ -43,6 +43,17 @@ const leaveSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    paidLeaveDays: {
+      type: Number,
+      default: 0
+    },
+    unpaidLeaveDays: {
+      type: Number,
+      default: 0
+    },
+    totalLeaveDays: {
+      type: Number
+    }
   },
   {
     timestamps: true,

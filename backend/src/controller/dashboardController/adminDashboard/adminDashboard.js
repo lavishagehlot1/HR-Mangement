@@ -1,3 +1,4 @@
+import { DEPARTMENTS } from "../../../constants/department.js";
 import Attendance from "../../../models/attendanceModule.js";
 import user from "../../../models/authModels.js";
 import Employee from "../../../models/employeeModel.js";
@@ -18,7 +19,10 @@ export const getAdminDashboard = async (req, res, next) => {
             presentToday,
             halfDayToday,
             absentToday,
-            pendingLeaves] = await Promise.all([
+            pendingLeaves,
+            approvedLeaves,
+            rejectedLeaves,
+            aggregation] = await Promise.all([
                 Employee.countDocuments(),
                 user.countDocuments({
                     role: 'HR'
@@ -50,8 +54,30 @@ export const getAdminDashboard = async (req, res, next) => {
 
                 Leave.countDocuments({
                     status: "pending"
-                })
+                }),
+                Leave.countDocuments({
+                    status:'approved'
+                }),
+                Leave.countDocuments({
+                    status:'rejected'
+                }),
+                Employee.aggregate([
+                    {
+                        $group:{
+                            _id:"$department",
+                            count:{$sum:1}
+                        }
+                    }
+                ])
             ]);
+
+            const DeparmentDistribution=DEPARTMENTS.map((department)=>{
+                const found=aggregation.find((item)=>item._id===department);
+                return{
+                    department,
+                    count:found?found.count:0
+                }
+            })
         return res.status(statusCode.SUCCESS).json(
             apiResponse(
                 statusCode.SUCCESS,
@@ -63,7 +89,10 @@ export const getAdminDashboard = async (req, res, next) => {
                     presentToday,
                     halfDayToday,
                     absentToday,
-                    pendingLeaves
+                    pendingLeaves,
+                    approvedLeaves,
+                    rejectedLeaves,
+                    DeparmentDistribution
                 }
             )
         )
