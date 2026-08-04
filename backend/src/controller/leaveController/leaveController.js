@@ -4,7 +4,6 @@ import { apiResponse } from '../../utilis/apiResponse.js';
 import AppError from '../../utilis/appError.js';
 import { getPagination } from '../../utilis/pagination.js';
 import statusCode from '../../utilis/statusCode.js';
-import { LEAVE_STATUS } from '../../constants/leaveStatus.js';
 import LeaveBalance from '../../models/leaveBalanceModel.js';
 import mongoose from 'mongoose';
 import { LEAVE_TYPE_MAP } from '../../constants/leaveTypeMap.js';
@@ -129,7 +128,7 @@ export const viewLeaveRequest = async (req, res, next) => {
         const status = req.query.status;//pending approved ,rejected
         let query = {};//You start with no filter (fetch everything).
         //Then, optionally, you add filters dynamically depending on request query parameters:
-        if (status) query.LEAVE_STATUS = status;//If the client sends ?status=pending, the query becomes { status_of_leave: "pending" }
+        if (status) query.status = status;//If the client sends ?status=pending, the query becomes { status_of_leave: "pending" }
         //If the client doesn’t send any status, the query stays {} → fetch all leaves
 
         // Count total leaves for pagination info
@@ -137,14 +136,35 @@ export const viewLeaveRequest = async (req, res, next) => {
 
 
         const allLeaves = await Leave.find(query)
-            .populate("employee_id", "employeeName employeeId")
-            .skip(skip).limit(limit)
-            .sort({ createdAt: -1 });//sort by createdAt in descending order
+            .populate({
+                path: "employeeId",
+                populate: {
+                    path: "userId",
+                    select: "userFirstName userLastName userEmail"
+                }
+            })
+           .sort({ createdAt: -1 })//sort by createdAt in descending order
+           .skip(skip)
+           .limit(limit)
 
         console.log("ALL LEAVES:", allLeaves);
 
         //check if no leave is exist
-        if (!allLeaves || allLeaves.length === 0) return AppError(res, statusCode.NOT_FOUND, "Currently no leaves is exist");
+        if (allLeaves.length === 0) {
+            return res.status(statusCode.OK_COMPLETED).json(
+                apiResponse(
+                    statusCode.OK_COMPLETED,
+                    "No leave requests found",
+                    {
+                        totalLeaves: 0,
+                        page,
+                        limit,
+                        totalPage: 0,
+                        leaves: []
+                    }
+                )
+            );
+        }
 
         //response
         return res.status(statusCode.OK_COMPLETED).json(
@@ -174,18 +194,27 @@ export const viewLeaveRequest = async (req, res, next) => {
 export const viewLeaveHistory = async (req, res, next) => {
     try {
         //fetch loggd-in userId
-        let userID = req.user.id;
+        const userID = req.user.id;
         console.log("user idfrom jwt", userID);
 
         //find employee linked with this user
-        let _employee = await Employee.findOne({ userId: userID });
+        const _employee = await Employee.findOne({ userId: userID });
         console.log("employee from db", _employee);
         if (!_employee) return AppError(res, statusCode.NOT_FOUND, "Employee profil not found");
 
         //get only this employee leave
-        const leaveHistory = await Leave.find({ employee_id: _employee._id });
+        const leaveHistory = await Leave.find({ employeeId: _employee._id }).sort({createdAt:-1});
         console.log("My leaves hitory", leaveHistory);
 
+        if (leaveHistory.length === 0) {
+            return res.status(statusCode.OK_COMPLETED).json(
+                apiResponse(
+                    statusCode.OK_COMPLETED,
+                    "No leave history found",
+                    { leaveHistory: [] }
+                )
+            );
+        }
         return res.status(statusCode.OK_COMPLETED).json(
             apiResponse(statusCode.OK_COMPLETED,
                 "History of my leaves fetched successfully",
@@ -299,6 +328,14 @@ export const rejectLeaveById = async (req, res, next) => {
 
         const rejectLeave = await Leave.findById(id);
         if (!rejectLeave) return AppError(res, statusCode.NOT_FOUND, "Leave request not found");
+
+        if(rejectLeave.status!=="pending"){
+            return AppError(
+                res,
+                statusCode.BAD_REQUEST,
+                `Leave is already ${rejectLeave.status}`
+            )
+        } 
 
         //update status
         rejectLeave.status = "rejected";

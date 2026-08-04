@@ -23,6 +23,6 @@ export const authorization=async (req,res,next)=>{
          next()
     }catch(err){
         console.log("error",err)
-         return next(new AppError("Invalid or expired token", statusCode.UNAUTHORIZED));
+         return next( AppError("Invalid or expired token", statusCode.UNAUTHORIZED));
     }
 } 
