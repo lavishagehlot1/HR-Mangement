@@ -5,11 +5,13 @@ import { AdminDashboardServices } from '../../../services/dashboardServices';
 import DepartmentPieChart from './DepartmentPieChart';
 import { Row, Col } from 'react-bootstrap';
 import AttendanceChart from './attendanceChart';
+import LeavePieChart from './LeavePieChart';
 export default function AdminDashboard() {
     const [dashboardData, setdashboardData] = useState({});
     useEffect(() => {
         fetchDashboard();
     }, []);
+   
 
     const fetchDashboard = async () => {
         try {
@@ -52,8 +54,37 @@ export default function AdminDashboard() {
             ];
     console.log('attendanceData', attendanceData);
 
-    const departmentData=dashboardData.DeparmentDistribution||[];
-    console.log('departmentData',departmentData);
+    const departmentData = dashboardData.DeparmentDistribution || [];
+    console.log('departmentData', departmentData);
+    // const leavePieData = [
+    //     {
+    //         name: "Pending",
+    //         value: dashboardData.pendingLeaves
+    //     },
+    //     {
+    //         name: "Approved",
+    //         value: dashboardData.approvedLeaves
+    //     },
+    //     {
+    //         name: "Rejected",
+    //         value: dashboardData.rejectedLeaves
+    //     }
+    // ];
+    const leavePieData =
+    dashboardData.pendingLeaves === 0 &&
+    dashboardData.approvedLeaves === 0 &&
+    dashboardData.rejectedLeaves === 0
+        ? [
+            { name: "Pending", value: 8 },
+            { name: "Approved", value: 20 },
+            { name: "Rejected", value: 5 },
+        ]
+        : [
+            { name: "Pending", value: dashboardData.pendingLeaves },
+            { name: "Approved", value: dashboardData.approvedLeaves },
+            { name: "Rejected", value: dashboardData.rejectedLeaves },
+        ];
+    console.log('leavePieData', leavePieData);
     return (
         <>
             <div className=" ms-4 heading">
@@ -96,7 +127,7 @@ export default function AdminDashboard() {
                     <DepartmentPieChart data={departmentData} />
                 </Col>
                 <Col lg={4} className="d-flex justify-content-center">
-                    <DepartmentPieChart data={departmentData} />
+                    <LeavePieChart data={leavePieData} />
                 </Col>
             </Row>
            

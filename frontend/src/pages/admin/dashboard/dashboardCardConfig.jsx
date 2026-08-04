@@ -51,3 +51,8 @@ export const dashboardCards = [
     icon: <FaClipboardList size={26} />,
   },
 ];
+export const employeeCardKeys = [
+  "presentToday",
+  "halfDayToday",
+  "absentToday",
+];

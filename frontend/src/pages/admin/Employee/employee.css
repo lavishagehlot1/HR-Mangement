@@ -1,0 +1,22 @@
+.icon-circle{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#EEF2FF;
+    color:#4F46E5;
+}
+.card{
+    background-color: #ffff;
+    border: #E5E7EB;
+    min-width: 210px;
+    width: 327px;
+    max-height: 200px;
+    height:154px;
+    align-items: center;
+    border-radius: 10px;
+    margin-left: 4px;
+    
+}

@@ -1,0 +1,31 @@
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    color: white;
+    text-decoration: none;
+
+    padding: 14px 18px;
+    margin-bottom: 10px;
+
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-item:hover {
+    background: rgba(255,255,255,0.08);
+    color: white;
+}
+
+.active-item {
+    background: linear-gradient(90deg, #7c3aed, #6d28d9);
+    color: white;
+    font-weight: 600;
+
+    box-shadow: 0 6px 20px rgba(124,58,237,.35);
+}
+
+.active-item svg {
+    color: white;
+}
