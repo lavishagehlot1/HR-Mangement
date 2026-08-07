@@ -1,5 +1,5 @@
 
- .left-panel {
+ .left-panell {
     background-color: #0F172A;
     display: flex;
     flex-direction: column;
@@ -23,13 +23,86 @@
 .navbar{
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 18px 30px;
+    background: #ffffff;
     max-height: 100px;
-    height:70px;
     border-bottom: 1px solid #F8F8FB;
 }
+.search-box{
+    width: 380px;
+}
+.search-icon{
+    background:#fff;
+    border-right:none;
+    color:#6b7280;
+}
+.search-input{
+    border-left:none;
+    box-shadow:none !important;
+    padding:12px;
+}
+
+.search-input:focus{
+    border-color:#ced4da;
+}
+
 .main-content{
     background-color:#F8F8FB;
      flex: 1;
     overflow-y: auto;
     padding: 20px;
+}
+/* .profileImg{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    object-fit:cover;
+    border:2px solid #edf2f7;
+}
+.rightNav{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+.downitem{
+     font-size:18px;
+    color:#6b7280;
+} */
+ .rightNav{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    cursor:pointer;
+}
+
+.profileImg{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.profileInfo h6{
+    margin:0;
+    font-size:20px;
+    font-weight:600;
+}
+
+.profileInfo span{
+    font-size:16px;
+    color:#6c757d;
+}
+
+.downItem{
+    color:#6c757d;
+    font-size:14px;
+}
+
+.profile-toggle{
+    cursor:pointer;
+}
+
+.dropdown-toggle::after{
+    display:none; /* Removes Bootstrap's default arrow */
 }

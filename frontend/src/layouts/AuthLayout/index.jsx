@@ -7,12 +7,12 @@ export default function AuthLayout(){
 return (
     <>
         <div className="min-vh-100 d-flex justify-content-center align-items-center bg-warning grad1">
-            <Container className="py-4">
-                <div className=" authCard rounded-5 shadow-lg overflow-hidden bg-white"
+            <Container className="py-5">
+                <div className=" authCard rounded-5 shadow-lg  bg-white"
                 >
-                    <Row className="g-0 flex-grow-1">
+                    <Row className="g-0 h-100">
                         {/* Left Panel */}
-                        <Col xs={12} md={6} lg={8} className="bg-white p-5"
+                        <Col xs={12} md={6} lg={8} className="bg-white p-5 left-panel"
                         >
                             <Outlet />
 

@@ -69,13 +69,13 @@ export default function Login() {
             localStorage.setItem('token',token);
             localStorage.setItem('user',JSON.stringify(user));
 
-            // if(user.role==='admin'){
-            //     navigate('/admin/dashboard');
-            // }else if(user.role==='HR'){
-            //     navigate('/hr/dashboard');
-            // }else if(user.role==='employee'){
-            //     navigate('/employee/dashboard')
-            // }
+            if(user.role==='admin'){
+                navigate('/admin/admindashboard');
+            }else if(user.role==='HR'){
+                navigate('/hr/dashboard');
+            }else if(user.role==='employee'){
+                navigate('/employee/dashboard')
+            }
 
         }catch(err){
             console.log(err);

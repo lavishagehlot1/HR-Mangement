@@ -1,5 +1,5 @@
-.grad1{
-    height: 100vh;
+/* .grad1{
+    /* height: 100vh; 
     background-color: #feb47b;
     background: linear-gradient(to right, #a2ddd8, #e492cc);
 }
@@ -7,23 +7,132 @@
     width: 100%;
     max-width: 1400px;
     min-height: 650px;
-    display: flex;
+     display: flex;
+    height: 600px; 
 }
 .right-panel{
     background-color: #C0DBEA;
-    overflow: visible;
+    overflow: visible !important;
+    height: 100% !important;
 }
+/* .left-panel{
+    height: 100%;
+    border-radius: 7px;
+} 
 .girl-img{
     position: absolute;
     bottom: 0;
     left:-221px;
     width: 500px;
+    top:110px;
     z-index: 2;
 }
 .cactus-img{
     position: absolute;
     right: 175px;
+    top:175px;
     bottom: 28px;
     width: 127px;
     z-index: 1;
+} */
+
+
+/* Background */
+.grad1 {
+    min-height: 100vh;
+    background: linear-gradient(to right, #a2ddd8, #e492cc);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Main Card */
+.authCard {
+    width: 100%;
+    max-width: 1400px;
+    min-height: 650px;
+    background: #fff;
+    border-radius: 30px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Make row fill the card */
+.authCard .row {
+    min-height: 650px;
+}
+
+/* Left Panel */
+.left-panel {
+    background: #ffffff;
+    padding: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Right Panel */
+.right-panel {
+    background: #c0dbea;
+    position: relative;
+    overflow: visible !important;
+    border-radius: 30px 30px 30px 30px;
+}
+
+/* Girl Image */
+.girl-img {
+    position: absolute;
+    width: 500px;
+    left: -220px;
+    top: 209px;
+    z-index: 2;
+}
+
+/* Cactus */
+.cactus-img {
+    position: absolute;
+    width: 130px;
+    right: 184px;
+    bottom: 260px;
+    z-index: 1;
+}
+
+/* Tablet */
+@media (max-width: 991px) {
+
+    .authCard {
+        min-height: auto;
+    }
+
+    .authCard .row {
+        min-height: auto;
+    }
+
+    .girl-img {
+        width: 380px;
+        left: -150px;
+        top: 80px;
+    }
+
+    .cactus-img {
+        width: 100px;
+        right: 40px;
+        bottom: 50px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+
+    .right-panel {
+        display: none;
+    }
+
+    .left-panel {
+        padding: 30px;
+    }
+
+    .authCard {
+        border-radius: 20px;
+    }
 }

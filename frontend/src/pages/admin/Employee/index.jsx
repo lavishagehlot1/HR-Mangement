@@ -3,6 +3,7 @@ import { Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { AdminDashboardServices } from "../../../services/dashboardServices";
 import './employee.css';
+import SearchBar from "../../../components/common/SearchBar/SearchBar";
 
 export default function Employee(){
     const cardToShow=dashboardCards.filter((card)=>employeeCardKeys.includes(card.key))
@@ -54,6 +55,20 @@ export default function Employee(){
                         </Col>
                     ))}
                 </Row>
+            </div>
+            {/* employee section */}
+            <div className="ms-4 mt-4 employee-section">
+                <Row className="align-items-center g-3">
+                    <Col md={4}>
+                       <SearchBar  placeholder="Search employee..." className="w-75" />
+                    </Col>
+
+                    <Col md={2}>Department</Col>
+                    <Col md={2}>Role</Col>
+                    <Col md={2}>Status</Col>
+                    <Col md={2}>Export</Col>
+                </Row>
+
             </div>
         </>
     )
