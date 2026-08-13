@@ -1,7 +1,7 @@
 import express from 'express';
 import { authorization } from '../middleware/authMiddleware.js';
 import { authorize } from '../middleware/authorizeRole.js';
-import { createEmployee, deleteEmployeeById, getAllEmployee, getEmployeeById, getMyProfile, updateEmployeeById } from '../controller/employeeController/employeeController.js';
+import { createEmployee, deleteEmployeeById, getAllEmployee, getDepartmentAndRoles, getEmployeeById, getMyProfile, updateEmployeeById } from '../controller/employeeController/employeeController.js';
 import { validate } from '../middleware/validations.js';
 import { employeeCreateSchema, employeeUpdateSchema, idSchema } from '../validations/employeeValidation.js';
 const employeeRoute=express.Router();
@@ -17,4 +17,5 @@ employeeRoute.put('/update/:id',authorize("admin","HR"),
     validate({body:employeeUpdateSchema,params:idSchema}),
     updateEmployeeById);
 employeeRoute.delete('/delete/:id',authorize('admin'),deleteEmployeeById)
+employeeRoute.get('/departmentJobRoles',authorize('admin','HR'),getDepartmentAndRoles)
 export default employeeRoute

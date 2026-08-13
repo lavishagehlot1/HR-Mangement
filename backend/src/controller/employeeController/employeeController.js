@@ -6,6 +6,8 @@ import { getPagination } from "../../utilis/pagination.js";
 import LeaveBalance from "../../models/leaveBalanceModel.js";
 import user from "../../models/authModels.js";
 import mongoose from "mongoose";
+import { DEPARTMENTS } from "../../constants/department.js";
+import { DEPARTMENT_JOB_ROLES } from "../../constants/departmentJobRoles.js";
 /**
  * POST request
  * createEmployee controller
@@ -270,6 +272,29 @@ export const deleteEmployeeById=async(req,res,next)=>{
             await session.abortTransaction();
             session.endSession();
         }
+        console.error("SERVER ERROR:",err);
+        next(err);
+    }
+}
+
+/**
+ * GET REQUEST
+ * getDepartmentsAndRoles 
+ */
+
+export const getDepartmentAndRoles=async(req,res,next)=>{
+    try{
+        return res.status(statusCode.SUCCESS).json(
+            apiResponse(
+                statusCode.SUCCESS,
+                "Departments and roles fetched successfully",
+                {
+                    department:DEPARTMENTS,
+                    roles:DEPARTMENT_JOB_ROLES
+                }
+            )
+        )
+    }catch(err){
         console.error("SERVER ERROR:",err);
         next(err);
     }
