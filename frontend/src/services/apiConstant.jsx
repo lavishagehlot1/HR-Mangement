@@ -3,5 +3,7 @@ export const API_URLs={
     register:'api/mangement/register',
     adminDashboard:'api/mangement/dashboard/admin',
     hrDashboard:'api/mangement/dashboard/HR',
-    employeeDashboard:'api/mangement/dashboard/employee'
+    employeeDashboard:'api/mangement/dashboard/employee',
+    departmentJobRoles:'api/mangement/departmentJobRoles',
+    allEmployee: 'api/mangement/allEmployee',
 }
