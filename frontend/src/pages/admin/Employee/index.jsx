@@ -8,7 +8,7 @@ import EmployeeList from "./component/employeeList";
 
 export default function Employee(){
     const cardToShow=dashboardCards.filter((card)=>employeeCardKeys.includes(card.key))
-    const [dashboardData, setdashboardData] = useState({});
+    const[dashboardData, setdashboardData] = useState({});
     const[departments,setDepartment]=useState([]);
     const[departmentRoles,setDepartmentRoles]=useState({});
     const[selectedDepartment,setSelectedDepartment]=useState("");
@@ -53,7 +53,8 @@ export default function Employee(){
         try{
             const response=await getAllEmployees();
             console.log('Employee API Response:',response);
-            setEmployees(response.data.data);
+            console.log('Employee Data:',response.data);
+            setEmployees(response.data);
         }catch(err){
             console.log(err, "error");
         }
@@ -142,7 +143,7 @@ export default function Employee(){
                         <Button variant="primary">Export</Button>
                     </Col>
                 </Row>
-                            <EmployeeList employees={employees} selectedDepartment={selectedDepartment} selectedRole={selectedRole} />
+                    <EmployeeList employees={employees} selectedDepartment={selectedDepartment} selectedRole={selectedRole} />
             </div>
         </>
     )
